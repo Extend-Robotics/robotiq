@@ -45,8 +45,7 @@ Robotiq3FGripperROS::Robotiq3FGripperROS(ros::NodeHandle& nh, boost::shared_ptr<
 
     //! setup dynamic reconfigure
     reconfigure_.reset(new ReconfigureServer(reconfigure_mutex_, nh_));
-    ReconfigureServer::CallbackType f = boost::bind(&Robotiq3FGripperROS::handleReconfigure, this, _1, _2);
-    reconfigure_->setCallback(f);
+    reconfigure_->setCallback([this](auto config, auto level){ handleReconfigure(config, level); });
 
     if (joint_names.size() != 4)
     {
