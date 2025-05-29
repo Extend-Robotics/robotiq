@@ -6,3 +6,7 @@ catkin_python_setup()
 catkin_package(
     CATKIN_DEPENDS rospy
 )
+install(DIRECTORY src/robotiq_modbus_rtu/robotiqmodbus
+  DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}/robotiq_modbus_rtu
+  FILES_MATCHING PATTERN "*.py"
+)
