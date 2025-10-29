@@ -5,7 +5,7 @@ from catkin_pkg.python_setup import generate_distutils_setup
 
 # fetch values from package.xml
 setup_args = generate_distutils_setup(
-    packages=["robotiq_modbus_rtu"],
+    packages=["robotiq_modbus_rtu","robotiq_modbus_rtu.robotiqmodbus.client"],
     package_dir={"": "src"},
 )
 
