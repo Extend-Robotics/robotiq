@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: robotiq_2f_140_gripper_visualization
+    relative_path: urdf/robotiq_arg2f_140_model.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/robotiq_arg2f_140_model.srdf
+  CONFIG:
+    author_name: Nitish
+    author_email: nitish@extendrobotics.com
+    generated_timestamp: 1789377765

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="robotiq_arg2f_140_model">
+  <!-- parameters -->
+  <xacro:arg name="side" default="" />
+  <xacro:include filename="$(find robotiq_2f_140_gripper_visualization)/srdf/robotiq_arg2f_140_model_macro.srdf.xacro" />
+  <xacro:robotiq_arg2f_140_model_macro_srdf prefix="$(arg side)_hand_"/>
+</robot>

@@ -62,7 +62,7 @@ class communication:
             stopbits=1,
             bytesize=8,
             baudrate=115200,
-            timeout=0.05,
+            timeout=1.0,
         )
         if not self.client.connect():
             print("Unable to connect to {}".format(device))

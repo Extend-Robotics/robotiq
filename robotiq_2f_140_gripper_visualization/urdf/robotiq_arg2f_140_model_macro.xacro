@@ -215,12 +215,19 @@
     <xacro:finger_joints prefix="${prefix}" fingerprefix="right" reflect="-1.0"/>
   </xacro:macro>
 
-  <xacro:macro name="robotiq_arg2f_140" params="prefix">
+  <xacro:macro name="robotiq_arg2f_140" params="prefix:='' attach_to:='' rpy:='0 0 0' xyz:='0 0 0' ">
     <xacro:robotiq_arg2f_base_link prefix="${prefix}"/>
     <xacro:finger_links prefix="${prefix}" fingerprefix="left" stroke="140"/>
     <xacro:finger_links prefix="${prefix}" fingerprefix="right" stroke="140"/>
     <xacro:finger_joint prefix="${prefix}"/>
     <xacro:right_outer_knuckle_joint prefix="${prefix}"/>
     <xacro:robotiq_arg2f_transmission prefix="${prefix}"/>
+    <xacro:unless value="${attach_to == ''}">
+    <joint name="${prefix}gripper_fix" type="fixed">
+      <parent link="${attach_to}"/>
+      <child link="${prefix}robotiq_arg2f_base_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+  </xacro:unless>
   </xacro:macro>
 </robot>
