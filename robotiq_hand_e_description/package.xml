@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>robotiq_hand_e_description</name>
+  <version>1.0.0</version>
+  <description>
+    URDF/xacro description of the Robotiq Hand-E gripper (50 mm and 100 mm stroke)
+    for ROS Noetic. Ported from robotiq/robotiq-ros (grippers/robotiq_description, v1.3.0).
+  </description>
+  <maintainer email="you@example.com">Your Name</maintainer>
+  <author>Robotiq (original description)</author>
+  <license>BSD-3-Clause</license>
+  <url type="repository">https://github.com/robotiq/robotiq-ros</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>urdf</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>rviz</exec_depend>
+
+  <test_depend>roslaunch</test_depend>
+</package>

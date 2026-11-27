@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: robotiq_3f_gripper_visualization
+    relative_path: cfg/robotiq-3f-gripper_articulated.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/robotiq-3f-gripper_articulated.srdf
+  CONFIG:
+    author_name: Nitish Sharma
+    author_email: nitish@extendrobotics.com
+    generated_timestamp: 1794788277

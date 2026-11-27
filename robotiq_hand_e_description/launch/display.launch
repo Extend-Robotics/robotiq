@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="prefix" default=""/>
+  <arg name="stroke" default="0.050" doc="Total opening in metres: 0.050 or 0.100"/>
+  <arg name="gui" default="true" doc="Show joint_state_publisher_gui sliders"/>
+  <arg name="rviz" default="true"/>
+
+  <include file="$(find robotiq_hand_e_description)/launch/load_hand_e.launch">
+    <arg name="prefix" value="$(arg prefix)"/>
+    <arg name="stroke" value="$(arg stroke)"/>
+  </include>
+
+  <node if="$(arg gui)" name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+  <node unless="$(arg gui)" name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" required="true"
+        args="-d $(find robotiq_hand_e_description)/rviz/view_hand_e.rviz"/>
+</launch>
