@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- Standalone Hand-E model, e.g.
+     rosrun xacro xacro robotiq_hand_e.urdf.xacro stroke:=0.100 prefix:=gripper_ -->
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="robotiq_hand_e">
+  <xacro:arg name="prefix" default=""/>
+  <xacro:arg name="stroke" default="0.050"/>
+  <xacro:arg name="tcp_z_offset" default="0.1325"/>
+  <xacro:arg name="add_transmission" default="false"/>
+
+  <xacro:include filename="$(find robotiq_hand_e_description)/urdf/robotiq_hand_e_macro.urdf.xacro"/>
+
+  <link name="world"/>
+
+  <xacro:robotiq_hand_e prefix="$(arg prefix)" parent="world"
+                        stroke="$(arg stroke)" tcp_z_offset="$(arg tcp_z_offset)"
+                        add_transmission="$(arg add_transmission)">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:robotiq_hand_e>
+</robot>

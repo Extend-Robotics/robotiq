@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<!--
+  Robotiq Hand-E description macro for ROS Noetic.
+  Ported from robotiq/robotiq-ros grippers/robotiq_description/urdf/robotiq_hand_e_macro.urdf.xacro (v1.3.0).
+  The ROS 2-only parts (ros2_control block, Isaac / topic-based sim arguments) are replaced
+  by an optional ROS 1 transmission for ros_control / gazebo_ros_control.
+-->
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <!--
+    prefix           : string prepended to every link/joint name
+    parent           : link the gripper is mounted on
+    origin (block)   : pose of the gripper base in the parent frame
+    stroke           : total opening in metres, 0.050 (standard) or 0.100
+    tcp_z_offset     : distance from the base to the TCP frame along z
+    add_transmission : add a ros_control transmission on the driven finger joint
+    hw_interface     : hardware interface used by that transmission
+  -->
+  <xacro:macro name="robotiq_hand_e" params="
+      parent
+      *origin
+      prefix:=''
+      stroke:=0.050
+      tcp_z_offset:=0.1325
+      add_transmission:=false
+      attach_to:=''
+      rpy:='0 0 0'
+      xyz:='0 0 0'
+      hw_interface:=hardware_interface/PositionJointInterface">
+
+    <xacro:property name="stroke_f" value="${float(stroke)}"/>
+    <xacro:if value="${(stroke_f &lt; 0.0495 or stroke_f &gt; 0.0505) and (stroke_f &lt; 0.0995 or stroke_f &gt; 0.1005)}">
+      <!-- Deliberately undefined name: makes xacro stop with a readable error. -->
+      ${ERROR__hand_e_stroke_must_be_0_050_or_0_100}
+    </xacro:if>
+
+    <xacro:property name="long_stroke" value="${stroke_f &gt; 0.075}"/>
+    <xacro:property name="mesh_dir" value="${'hand_e_100' if long_stroke else 'hand_e'}"/>
+    <xacro:property name="visual_ext" value="stl"/>
+    <xacro:property name="pkg" value="package://robotiq_hand_e_description/meshes"/>
+    <!-- One finger's top speed: the gap closes at 0.150 m/s with both fingers moving. -->
+    <xacro:property name="finger_speed" value="0.075"/>
+
+    <xacro:unless value="${attach_to == ''}">
+    <joint name="${prefix}gripper_fix" type="fixed">
+      <parent link="${attach_to}"/>
+      <child link="${prefix}hand_e_base_link"/>
+      <origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+    </xacro:unless>
+
+    <!-- Base -->
+    <link name="${prefix}hand_e_base_link">
+      <xacro:unless value="${long_stroke}">
+        <inertial>
+          <origin xyz="0 0 0.04607" rpy="0 0 0"/>
+          <mass value="0.86387"/>
+          <inertia ixx="1017560E-9" ixy="0" ixz="2235E-9" iyy="1028041E-9" iyz="0" izz="489810E-9"/>
+        </inertial>
+      </xacro:unless>
+      <xacro:if value="${long_stroke}">
+        <inertial>
+          <origin xyz="0 0.00002 0.0504" rpy="0 0 0"/>
+          <mass value="0.95026"/>
+          <inertia ixx="1178590E-9" ixy="16E-9" ixz="-56E-9" iyy="1363484E-9" iyz="805E-9" izz="711660E-9"/>
+        </inertial>
+      </xacro:if>
+      <visual>
+        <geometry>
+          <mesh filename="${pkg}/visual/${mesh_dir}/hand-e.${visual_ext}"/>
+        </geometry>
+        <material name="${prefix}hand_e_black">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <geometry>
+          <mesh filename="${pkg}/collision/${mesh_dir}/hand-e.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- Only one of gripper_fix / robotiq_hande_base_joint may parent the base link. -->
+    <xacro:if value="${attach_to == ''}">
+    <joint name="${prefix}robotiq_hande_base_joint" type="fixed">
+      <parent link="${parent}"/>
+      <child link="${prefix}hand_e_base_link"/>
+      <xacro:insert_block name="origin"/>
+    </joint>
+    </xacro:if>
+
+    <!-- Fingers. Upstream has no finger inertia; a small placeholder is added so
+         Gazebo and KDL accept the moving links. -->
+    <xacro:macro name="hand_e_finger" params="side">
+      <link name="${prefix}hande_${side}_finger">
+        <inertial>
+          <origin xyz="0 0 0.02" rpy="0 0 0"/>
+          <mass value="0.03"/>
+          <inertia ixx="5E-6" ixy="0" ixz="0" iyy="5E-6" iyz="0" izz="2E-6"/>
+        </inertial>
+        <visual>
+          <geometry>
+            <mesh filename="${pkg}/visual/${mesh_dir}/${side}_finger.${visual_ext}"/>
+          </geometry>
+          <material name="${prefix}hand_e_grey">
+            <color rgba="0.7 0.7 0.7 1"/>
+          </material>
+        </visual>
+        <collision>
+          <geometry>
+            <mesh filename="${pkg}/collision/${mesh_dir}/${side}_finger.stl"/>
+          </geometry>
+        </collision>
+      </link>
+    </xacro:macro>
+    <xacro:hand_e_finger side="left"/>
+    <xacro:hand_e_finger side="right"/>
+
+    <!-- Each finger joint is that finger's travel: 0 = open, stroke/2 = closed.
+         The left finger is driven, the right one mimics it. -->
+    <joint name="${prefix}hande_left_finger_joint" type="prismatic">
+      <parent link="${prefix}hand_e_base_link"/>
+      <child link="${prefix}hande_left_finger"/>
+      <axis xyz="1 0 0"/>
+      <origin xyz="${-stroke_f/2} 0 0.099" rpy="0 0 0"/>
+      <limit lower="0.0" upper="${stroke_f/2}" velocity="${finger_speed}" effort="180"/>
+    </joint>
+    <joint name="${prefix}hande_right_finger_joint" type="prismatic">
+      <parent link="${prefix}hand_e_base_link"/>
+      <child link="${prefix}hande_right_finger"/>
+      <axis xyz="-1 0 0"/>
+      <origin xyz="${stroke_f/2} 0 0.099" rpy="0 0 0"/>
+      <limit lower="0.0" upper="${stroke_f/2}" velocity="${finger_speed}" effort="180"/>
+      <mimic joint="${prefix}hande_left_finger_joint" multiplier="1" offset="0"/>
+    </joint>
+
+    <!-- Tool centre point -->
+    <link name="${prefix}tcp_link"/>
+    <joint name="${prefix}tcp_link_joint" type="fixed">
+      <parent link="${prefix}hand_e_base_link"/>
+      <child link="${prefix}tcp_link"/>
+      <origin xyz="0 0 ${tcp_z_offset}" rpy="0 0 ${-pi/2}"/>
+    </joint>
+
+    <!-- Optional ROS 1 transmission (replaces the upstream ros2_control block) -->
+    <xacro:if value="${add_transmission}">
+      <transmission name="${prefix}hande_left_finger_trans">
+        <type>transmission_interface/SimpleTransmission</type>
+        <joint name="${prefix}hande_left_finger_joint">
+          <hardwareInterface>${hw_interface}</hardwareInterface>
+        </joint>
+        <actuator name="${prefix}hande_left_finger_motor">
+          <mechanicalReduction>1</mechanicalReduction>
+        </actuator>
+      </transmission>
+    </xacro:if>
+  </xacro:macro>
+</robot>

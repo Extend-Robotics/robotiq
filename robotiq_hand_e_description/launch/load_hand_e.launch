@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="prefix" default=""/>
+  <arg name="stroke" default="0.050" doc="Total opening in metres: 0.050 or 0.100"/>
+  <arg name="tcp_z_offset" default="0.1325"/>
+  <arg name="add_transmission" default="false"/>
+
+  <param name="robot_description"
+         command="$(find xacro)/xacro '$(find robotiq_hand_e_description)/urdf/robotiq_hand_e.urdf.xacro'
+                  prefix:='$(arg prefix)' stroke:=$(arg stroke)
+                  tcp_z_offset:=$(arg tcp_z_offset) add_transmission:=$(arg add_transmission)"/>
+</launch>

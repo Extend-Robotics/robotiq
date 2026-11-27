@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: robotiq_hand_e_description
+    relative_path: urdf/robotiq_hand_e.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/robotiq_hand_e.srdf
+  CONFIG:
+    author_name: Nitish Sharma
+    author_email: nitish@extendrobotics.com
+    generated_timestamp: 1794785403
