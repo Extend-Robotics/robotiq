@@ -3,5 +3,5 @@
   <!-- parameters -->
   <xacro:arg name="side" default="" />
   <xacro:include filename="$(find robotiq_hand_e_description)/srdf/robotiq_hand_e_macro.srdf.xacro" />
-  <xacro:robotiq_hand_e_macro_srdf prefix="$(arg side)_hand_"/>
+  <xacro:robotiq_hand_e_model_macro_srdf prefix="$(arg side)_hand_"/>
 </robot>

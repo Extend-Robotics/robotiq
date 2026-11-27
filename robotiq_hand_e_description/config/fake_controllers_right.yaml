@@ -1,8 +1,8 @@
 controller_list:
-  - name: fake_gripper_controller
+  - name: fake_right_hand_controller
     type: $(arg fake_execution_type)
     joints:
-      - right_hand_finger_joint
+      - right_hand_hande_left_finger_joint
 initial:  # Define initial robot poses per group
-  - group: gripper
+  - group: right_hand_gripper
     pose: open

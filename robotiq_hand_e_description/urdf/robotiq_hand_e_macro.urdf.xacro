@@ -47,6 +47,7 @@
       <child link="${prefix}hand_e_base_link"/>
       <origin xyz="${xyz}" rpy="${rpy}"/>
     </joint>
+    </xacro:unless>
 
     <!-- Base -->
     <link name="${prefix}hand_e_base_link">
@@ -79,11 +80,14 @@
       </collision>
     </link>
 
+    <!-- Only one of gripper_fix / robotiq_hande_base_joint may parent the base link. -->
+    <xacro:if value="${attach_to == ''}">
     <joint name="${prefix}robotiq_hande_base_joint" type="fixed">
       <parent link="${parent}"/>
       <child link="${prefix}hand_e_base_link"/>
       <xacro:insert_block name="origin"/>
     </joint>
+    </xacro:if>
 
     <!-- Fingers. Upstream has no finger inertia; a small placeholder is added so
          Gazebo and KDL accept the moving links. -->
